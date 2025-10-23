@@ -1,24 +1,26 @@
-# Python bytecode
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 
-# Virtual environments
+# Virtual environment
 .venv/
 .env/
 
-# Logs and temp files
-*.log
-*.tmp
-
-# IDE / Editor folders
+# IDE/editor files
 .idea/
-.vscode/
+*.sublime-project
+*.sublime-workspace
 
 # OS files
 .DS_Store
+Thumbs.db
 
-# Keep source files only
+# Log files
+*.log
+*.tmp
+
+# Allow Python scripts, notebooks, README, and gitignore
 !*.py
 !*.ipynb
 !README.md
-!LICENSE
+!.gitignore
