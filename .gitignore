@@ -1,11 +1,25 @@
+# Python cache
 __pycache__/
 *.pyc
+
+# Virtual environment
 .venv/
 .env/
+
+# IDE/editor files
 .idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
 *.log
 *.tmp
-.DS_Store
+
+# Allow Python scripts, notebooks, README, and gitignore
 !*.py
 !*.ipynb
 !README.md
