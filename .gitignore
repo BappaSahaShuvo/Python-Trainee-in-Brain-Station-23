@@ -1,26 +1,29 @@
-# Python cache
+# ---- Python Cache ----
 __pycache__/
 *.pyc
 
-# Virtual environment
+# ---- Virtual Environment ----
 .venv/
-.env/
+env/
+venv/
 
-# IDE/editor files
-.idea/
-*.sublime-project
-*.sublime-workspace
+# ---- Databases ----
+*.db
+*.sqlite3
 
-# OS files
+# ---- System Files ----
 .DS_Store
 Thumbs.db
 
-# Log files
+# ---- Logs ----
 *.log
-*.tmp
 
-# Allow Python scripts, notebooks, README, and gitignore
+# ---- Config / Private Keys (Prevent accidental leak) ----
+*.env
+*.key
+*.pem
+
+# ---- Allow Explicit Files ----
 !*.py
-!*.ipynb
 !README.md
 !.gitignore
