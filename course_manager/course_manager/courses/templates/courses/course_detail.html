@@ -1,0 +1,20 @@
+<!-- courses/templates/courses/course_detail.html -->
+{% extends 'courses/base.html' %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+  <h2>{{ course.title }}</h2>
+  <p><strong>Instructor:</strong> {{ course.instructor }}</p>
+  <p><strong>Start:</strong> {{ course.start_date|default:"TBA" }}</p>
+  <p><strong>Seats:</strong> {{ course.seats }}</p>
+
+  <div class="description">
+    {{ course.description|linebreaks }}
+  </div>
+
+  <div class="actions">
+    <a href="{% url 'courses:course_edit' course.pk %}">Edit</a> |
+    <a href="{% url 'courses:course_delete' course.pk %}">Delete</a> |
+    <a href="{% url 'courses:course_list' %}">Back to list</a>
+  </div>
+{% endblock %}
