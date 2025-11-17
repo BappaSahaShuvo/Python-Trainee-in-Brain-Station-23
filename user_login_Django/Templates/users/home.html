@@ -1,0 +1,12 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="text-center mt-5">
+  <h1>Welcome To Brain Station 23</h1>
+  <p class="lead">Welcome The ERP TEAM.</p>
+  <div class="mt-4">
+    <a class="btn btn-primary btn-lg me-2" href="{% url 'signup' %}">Signup</a>
+    <a class="btn btn-success btn-lg me-2" href="{% url 'login' %}">Login</a>
+    <a class="btn btn-outline-dark btn-lg" href="/admin/">Admin Login</a>
+  </div>
+</div>
+{% endblock %}

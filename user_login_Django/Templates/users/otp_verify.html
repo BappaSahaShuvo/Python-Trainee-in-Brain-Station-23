@@ -1,0 +1,149 @@
+<!-- templates/users/otp_verify.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OTP Verification</title>
+  <style>
+    .otp-box { font-family: monospace; font-size: 24px; padding: 10px; border: 1px solid #ccc; display:inline-block; }
+    .countdown { font-weight: bold; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <h2>OTP Verification</h2>
+  <p>User: <strong>{{ user_email }}</strong></p>
+
+  <div id="status">Waiting for admin approval...</div>
+
+  <div id="otp-area" class="hidden">
+    <p>OTP (shown after admin approval): <span class="otp-box" id="otp-code">-</span></p>
+    <p>Time left: <span id="time-left" class="countdown">-</span> seconds</p>
+  </div>
+
+  <form id="verify-form" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Verify OTP</button>
+  </form>
+
+  <button id="resend-btn" class="hidden">Resend OTP</button>
+
+  <p id="message"></p>
+
+<script>
+const userId = "{{ request.session.pending_user_id|default:'' }}";
+const userEmail = "{{ user_email|escapejs }}";
+let pollInterval = null;
+
+function startPolling() {
+  pollOnce();
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(pollOnce, 2000);
+}
+
+function pollOnce() {
+  fetch("{% url 'otp_status' %}?user_id=" + encodeURIComponent(userId))
+    .then(r => r.json())
+    .then(data => {
+      const statusEl = document.getElementById('status');
+      const otpArea = document.getElementById('otp-area');
+      const otpCode = document.getElementById('otp-code');
+      const timeLeft = document.getElementById('time-left');
+      const resendBtn = document.getElementById('resend-btn');
+
+      if (data.status === 'waiting') {
+        statusEl.textContent = 'Waiting for admin approval...';
+        otpArea.classList.add('hidden');
+        resendBtn.classList.add('hidden');
+      } else if (data.status === 'ok') {
+        statusEl.textContent = 'OTP sent by admin (visible below).';
+        otpArea.classList.remove('hidden');
+        otpCode.textContent = data.otp;
+        timeLeft.textContent = data.remaining;
+        resendBtn.classList.add('hidden');
+      } else if (data.status === 'expired') {
+        statusEl.textContent = 'OTP expired.';
+        otpArea.classList.remove('hidden');
+        otpCode.textContent = data.otp || '-';
+        timeLeft.textContent = 0;
+        resendBtn.classList.remove('hidden');
+      } else {
+        statusEl.textContent = 'Unknown status';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // start polling only if we have pending_user_id in session (server set)
+  if (userId) startPolling();
+
+  // handle verify form submit via AJAX to give immediate JSON responses
+  const form = document.getElementById('verify-form');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch("{% url 'verify_otp' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": formData.get('csrfmiddlewaretoken')
+      }
+    }).then(r => r.json())
+      .then(data => {
+        const msg = document.getElementById('message');
+        if (data.status === 'ok') {
+          if (data.message === 'signup_success') {
+            msg.textContent = 'Signup successful. You can now login.';
+            // redirect to login after short delay
+            setTimeout(() => { window.location.href = "{% url 'login' %}"; }, 1000);
+          } else if (data.message === 'login_success') {
+            msg.textContent = 'Login successful. Redirecting to profile...';
+            window.location.href = data.redirect;
+          } else {
+            msg.textContent = 'Success.';
+          }
+        } else if (data.status === 'wrong') {
+          msg.textContent = 'Wrong OTP.';
+        } else if (data.status === 'expired') {
+          msg.textContent = 'OTP expired. Click Resend OTP.';
+        } else {
+          msg.textContent = data.message || 'Error';
+        }
+      }).catch(err => {
+        console.error(err);
+      });
+  });
+
+  // handle resend
+  const resendBtn = document.getElementById('resend-btn');
+  resendBtn.addEventListener('click', function() {
+    fetch("{% url 'resend_otp' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: ""
+    }).then(r => r.json())
+      .then(data => {
+        const msg = document.getElementById('message');
+        if (data.status === 'ok') {
+          msg.textContent = 'New OTP generated.';
+          document.getElementById('otp-code').textContent = data.otp;
+          document.getElementById('time-left').textContent = data.remaining;
+          resendBtn.classList.add('hidden');
+        } else {
+          msg.textContent = data.message || 'Cannot resend OTP.';
+        }
+      }).catch(err => {
+        console.error(err);
+      });
+  });
+});
+</script>
+</body>
+</html>

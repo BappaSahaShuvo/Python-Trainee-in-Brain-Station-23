@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Admin Dashboard</h2>
+
+  <div class="d-flex justify-content-center mb-4">
+    <a href="#signupRequests" class="btn btn-outline-primary mx-2">Signup Requests</a>
+    <a href="#loginRequests" class="btn btn-outline-success mx-2">Login Requests</a>
+  </div>
+
+  <div id="signupRequests" class="mb-5">
+    <h4>Signup Requests</h4>
+    <table class="table table-striped">
+      <thead><tr><th>User</th><th>Email</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for user in pending_signups %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <a href="{% url 'accept_signup' user.id %}" class="btn btn-success btn-sm">Accept</a>
+            <a href="{% url 'reject_signup' user.id %}" class="btn btn-danger btn-sm">Reject</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="text-center">No pending signup requests.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div id="loginRequests">
+    <h4>Login Requests</h4>
+    <table class="table table-striped">
+      <thead><tr><th>User</th><th>Email</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for user in login_requests %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <a href="{% url 'block_user' user.id %}" class="btn btn-warning btn-sm">Block</a>
+            <a href="{% url 'delete_user' user.id %}" class="btn btn-danger btn-sm">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="text-center">No login requests.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

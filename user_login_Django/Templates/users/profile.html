@@ -1,0 +1,28 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-md-4 text-center">
+    {% if user.picture %}
+      <img src="{{ user.picture.url }}" class="profile-pic" alt="Profile picture">
+    {% else %}
+      <div style="width:140px;height:140px;border-radius:50%;background:#ddd;display:inline-flex;align-items:center;justify-content:center;">
+        <strong>{{ user.get_full_name|default:user.email|slice:":1" }}</strong>
+      </div>
+    {% endif %}
+  </div>
+  <div class="col-md-8">
+    <h4>{{ user.get_full_name }}</h4>
+    <table class="table">
+      <tr><th>Email</th><td>{{ user.email }}</td></tr>
+      <tr><th>Address</th><td>{{ user.address }}</td></tr>
+      <tr><th>Phone</th><td>{{ user.phone }}</td></tr>
+      <tr><th>NID</th><td>{{ user.nid_number }}</td></tr>
+      <tr><th>Age</th><td>{{ user.age }}</td></tr>
+      <tr><th>DOB</th><td>{{ user.date_of_birth }}</td></tr>
+      <tr><th>Gender</th><td>{{ user.gender }}</td></tr>
+    </table>
+
+    <a href="{% url 'email_change_request' %}" class="btn btn-outline-primary">Change Email</a>
+  </div>
+</div>
+{% endblock %}
