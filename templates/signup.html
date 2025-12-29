@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<style>
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.signup-bg {
+    background-image: url("{% static 'images/LoginSignup.png' %}");
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form-card {
+    background: rgba(0,0,0,0.75);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #0ff;
+    color: #fff;
+    width: 100%;
+    max-width: 500px;
+}
+.form-card input {
+    border-radius: 8px;
+    border: none;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+.btn-signup {
+    width: 100%;
+    padding: 15px;
+    font-size: 20px;
+    background: linear-gradient(45deg,#0ff,#f0f,#ff0,#0f0);
+    background-size: 300% 300%;
+    animation: gradientBG 5s ease infinite, glow 1.5s ease-in-out infinite alternate;
+    color: #fff;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+.btn-signup:hover { transform: scale(1.05); }
+@keyframes gradientBG {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+@keyframes glow {
+    0% {box-shadow:0 0 10px #0ff,0 0 20px #f0f;}
+    100% {box-shadow:0 0 25px #0ff,0 0 50px #f0f;}
+}
+.footer-signup {
+    text-align:center; margin-top:15px; font-size:14px; color:#fff;
+}
+</style>
+
+<div class="signup-bg">
+    <div class="form-card">
+        <h2 class="mb-4 text-center">Signup</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.full_name.label_tag }}<input type="text" name="full_name" class="form-control" placeholder="Full Name" value="{{ form.full_name.value }}">
+            {{ form.email.label_tag }}<input type="email" name="email" class="form-control" placeholder="Email" value="{{ form.email.value }}">
+            {{ form.date_of_birth.label_tag }}<input type="date" name="date_of_birth" class="form-control" value="{{ form.date_of_birth.value }}">
+            {{ form.age.label_tag }}<input type="number" name="age" class="form-control" placeholder="Age" value="{{ form.age.value }}">
+            {{ form.phone.label_tag }}<input type="text" name="phone" class="form-control" placeholder="Phone Number" value="{{ form.phone.value }}">
+            {{ form.password.label_tag }}<input type="password" name="password" class="form-control" placeholder="Password">
+            {{ form.confirm_password.label_tag }}<input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password">
+
+            <button type="submit" class="btn-signup mt-2">Signup</button>
+        </form>
+        <div class="footer-signup">Already have an account? <a href="{% url 'login' %}" style="color:#0ff;">Login</a></div>
+    </div>
+</div>
+{% endblock %}

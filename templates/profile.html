@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<style>
+.profile-bg {
+    background-color: #0a0a0a;
+    min-height: 100vh;
+    padding: 40px;
+    color: #fff;
+}
+.profile-card {
+    background: rgba(0,0,0,0.75);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #0ff;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.profile-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: none;
+}
+.profile-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #0ff;
+    display: block;
+    margin: 0 auto 20px;
+}
+.btn-profile {
+    width: 100%;
+    padding: 15px;
+    font-size: 20px;
+    background: linear-gradient(45deg,#0ff,#f0f,#ff0,#0f0);
+    background-size: 300% 300%;
+    animation: gradientBG 5s ease infinite, glow 1.5s ease-in-out infinite alternate;
+    color: #fff;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+</style>
+
+<div class="profile-bg">
+    <div class="profile-card">
+        <h2 class="mb-4 text-center">Profile</h2>
+
+        {% if request.user.profile_image %}
+            <img src="{{ request.user.profile_image.url }}" class="profile-img">
+        {% else %}
+            <img src="{% static 'images/default-avatar.png' %}" class="profile-img">
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="profile_image">
+            <input type="text" name="full_name" value="{{ request.user.full_name }}">
+            <input type="email" value="{{ request.user.email }}" disabled>
+            <input type="text" name="phone" value="{{ request.user.phone }}">
+            <input type="date" name="date_of_birth" value="{{ request.user.date_of_birth }}">
+            <input type="number" name="age" value="{{ request.user.age }}">
+            <button type="submit" class="btn-profile mt-2">Update Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

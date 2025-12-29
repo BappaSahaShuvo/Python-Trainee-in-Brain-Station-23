@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Meeting History{% endblock %}
+
+{% block content %}
+<style>
+.history-bg {
+    background-color: #1a1a1a; /* dark background */
+    min-height: 100vh;
+    padding: 40px;
+    color: #e0e0e0; /* light text for visibility */
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    padding: 8px 12px;
+    width: 260px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+}
+
+.search-box button {
+    padding: 8px 14px;
+    background: #00ffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table-custom th,
+.table-custom td {
+    padding: 12px;
+    border-bottom: 1px solid #00ffff;
+    vertical-align: top;
+    color: #e0e0e0;
+}
+
+.table-custom th {
+    color: #00ffff;
+    text-align: left;
+}
+
+.table-custom tr:hover {
+    background-color: #142f56;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 2px;
+    background: #00ffff;
+    color: #000;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.btn-voice {
+    background: #ff00ff;
+    color: #0d335a;
+}
+
+.summary-box {
+    max-width: 600px;
+    background-color: #2a2a2a; /* darker box */
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ffffff; /* summary text color */
+    white-space: pre-wrap; /* preserve line breaks */
+    word-wrap: break-word;
+    margin-bottom: 8px;
+}
+
+.keywords-box {
+    font-size: 13px;
+    color: #00ffff;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #888;
+}
+</style>
+
+<div class="history-bg">
+
+    <div class="history-header">
+        <h2>📜 Meeting History</h2>
+
+        <!-- 🔍 SEARCH -->
+        <form method="get" class="search-box">
+            <input
+                type="text"
+                name="q"
+                placeholder="Search summary..."
+                value="{{ request.GET.q }}"
+            >
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <table class="table-custom">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>Downloads</th>
+                <th>AI Voice</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in history %}
+            <tr>
+                <!-- FILE NAME -->
+                <td>
+                    {{ item.original_file.name|slice:"-35:" }}
+                </td>
+
+                <!-- DATE -->
+                <td>
+                    {{ item.created_at|date:"Y-m-d H:i" }}
+                </td>
+
+                <!-- SUMMARY -->
+                <td>
+                    <div class="summary-box">
+                        {{ item.summary }}
+                        {% if item.keywords %}
+                        <div class="keywords-box">
+                            Keywords: {{ item.keywords }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </td>
+
+                <!-- DOWNLOADS -->
+                <td>
+                    {% if item.pdf %}
+                        <a class="btn" href="{{ item.pdf.url }}" download>PDF</a>
+                    {% endif %}
+                    {% if item.txt %}
+                        <a class="btn" href="{{ item.txt.url }}" download>TXT</a>
+                    {% endif %}
+                    {% if item.docx %}
+                        <a class="btn" href="{{ item.docx.url }}" download>DOCX</a>
+                    {% endif %}
+                </td>
+
+                <!-- AI VOICE -->
+                <td>
+                    {% if item.summary %}
+                        <button
+                            class="btn btn-voice"
+                            onclick="playSummary('{{ item.id }}')">
+                            ▶ Play
+                        </button>
+
+                        <span id="summary-{{ item.id }}" style="display:none;">
+                            {{ item.summary|escapejs }}
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty">
+                    No meetings found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<!-- 🔊 AI ANIMATED SUMMARY (TEXT → VOICE) -->
+<script>
+function playSummary(id) {
+    const text = document.getElementById("summary-" + id).innerText;
+    if (!text) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1.1;
+    utterance.lang = "en-US";
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+}
+</script>
+
+{% endblock %}

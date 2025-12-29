@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<style>
+.dashboard-bg {
+    background-color: #0a0a0a;
+    min-height: 100vh;
+    padding: 40px;
+    color: #ffffff;
+}
+
+/* Upload Box */
+.upload-box {
+    border: 3px dashed #0ff;
+    border-radius: 15px;
+    padding: 60px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+    animation: borderMove 2s linear infinite;
+    background: rgba(255,255,255,0.05);
+}
+
+@keyframes borderMove {
+    0% { border-color: #0ff; }
+    25% { border-color: #f0f; }
+    50% { border-color: #ff0; }
+    75% { border-color: #0f0; }
+    100% { border-color: #0ff; }
+}
+
+.upload-text { font-size: 18px; }
+.upload-text input[type="file"] { display: none; }
+
+.upload-btn {
+    margin-top: 15px;
+    padding: 10px 25px;
+    background: #0ff;
+    color: #000;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* Submit Button */
+.submit-btn {
+    display: block;
+    margin: 25px auto;
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    background: linear-gradient(45deg,#0ff,#f0f,#ff0,#0f0);
+    background-size: 300% 300%;
+    animation: gradientBG 5s ease infinite;
+    color: #fff;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+@keyframes gradientBG {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 25px auto;
+    display: none;
+}
+
+.progress-bar {
+    height: 20px;
+    width: 0%;
+    background: linear-gradient(90deg,#0ff,#f0f,#0f0);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #0ff;
+}
+
+/* Summary Box */
+.summary-box {
+    margin: 30px auto;
+    max-width: 800px;
+    background: rgba(0,0,0,0.85);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #0ff;
+}
+
+/* Summary Text FIX */
+#finalSummary {
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+/* Keyword Highlight */
+.keyword {
+    color: #00ffff;
+    font-weight: bold;
+}
+
+/* Keyword List */
+.keyword-box {
+    margin-top: 15px;
+}
+
+.keyword-badge {
+    display: inline-block;
+    margin: 4px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: #0ff;
+    color: #000;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+/* Voice Button */
+.voice-btn {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background: #f0f;
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+</style>
+
+<div class="dashboard-bg">
+    <h2>Welcome, {{ request.user.full_name }}</h2>
+
+    <!-- FORM -->
+    <form method="POST" enctype="multipart/form-data" onsubmit="startProgress()">
+        {% csrf_token %}
+
+        <div class="upload-box" id="uploadBox">
+            <div class="upload-text">
+                Drag & Drop or Upload your mp3, mp4, wav, or txt files here
+                <br>
+
+                <label class="upload-btn">
+                    Upload File
+                    <input type="file" name="file" id="fileInput" required
+                           accept=".mp3,.wav,.mp4,.txt">
+                </label>
+
+                <p id="selectedFileName" style="margin-top:10px;color:#0f0;"></p>
+            </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">Processing...</div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Generate Summary
+        </button>
+    </form>
+
+    <!-- SUMMARY -->
+    {% if messages %}
+    <div class="summary-box">
+        {% for message in messages %}
+            <div id="finalSummary">{{ message }}</div>
+        {% endfor %}
+
+        <!-- KEYWORDS -->
+        {% if keywords %}
+        <div class="keyword-box">
+            <h4 style="color:#0ff;">🔑 Identified Keywords</h4>
+            {% for word in keywords %}
+                <span class="keyword-badge">{{ word }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- AI VOICE -->
+        <button class="voice-btn" onclick="readSummary()">
+            🔊 Play AI Voice Summary
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+/* Drag & Drop */
+const uploadBox = document.getElementById("uploadBox");
+const fileInput = document.getElementById("fileInput");
+
+uploadBox.addEventListener("dragover", e => e.preventDefault());
+uploadBox.addEventListener("drop", e => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+    showFileName();
+});
+
+fileInput.addEventListener("change", showFileName);
+
+function showFileName() {
+    if (fileInput.files.length > 0) {
+        document.getElementById("selectedFileName").innerText =
+            "Selected file: " + fileInput.files[0].name;
+    }
+}
+
+/* Progress Simulation */
+function startProgress() {
+    const container = document.getElementById("progressContainer");
+    const bar = document.getElementById("progressBar");
+    const text = document.getElementById("progressText");
+
+    container.style.display = "block";
+    bar.style.width = "5%";
+    text.innerText = "Uploading file...";
+
+    let progress = 5;
+    const steps = [
+        "Converting audio/video...",
+        "Transcribing with Whisper...",
+        "Analyzing meeting...",
+        "Generating summary...",
+        "Finalizing..."
+    ];
+
+    let stepIndex = 0;
+
+    const interval = setInterval(() => {
+        progress += 15;
+        bar.style.width = progress + "%";
+        text.innerText = steps[stepIndex] || "Done";
+        stepIndex++;
+
+        if (progress >= 90) clearInterval(interval);
+    }, 1200);
+}
+
+/* AI Voice */
+function readSummary() {
+    const text = document.getElementById("finalSummary").innerText;
+    if (!text) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1.1;
+    utterance.lang = "en-US";
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Full-page background */
+.home-bg {
+    background-image: url("{% static 'images/base.png' %}");
+    height: 100vh;
+    width: 100vw;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+/* Smaller Get Started button */
+.btn-get-started {
+    position: absolute;
+    left: 50%;
+    bottom: 120px;
+    transform: translateX(-50%);
+    background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff80);
+    background-size: 300% 300%;
+    color: #ffffff;
+    padding: 15px 50px; /* smaller size */
+    font-size: 26px;    /* smaller text */
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.8), 0 0 40px rgba(255,0,255,0.6);
+    animation: gradientBG 5s ease infinite, glow 1.5s ease-in-out infinite alternate;
+    transition: transform 0.3s;
+}
+.btn-get-started:hover {
+    transform: translateX(-50%) scale(1.1);
+}
+
+@keyframes gradientBG {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+
+@keyframes glow {
+    0% {box-shadow:0 0 10px rgba(0,255,255,0.6), 0 0 20px rgba(255,0,255,0.5);}
+    100% {box-shadow:0 0 30px rgba(0,255,255,1), 0 0 60px rgba(255,0,255,0.8);}
+}
+</style>
+
+<div class="home-bg">
+    <a href="{% url 'landing' %}" class="btn-get-started">GET STARTED</a>
+</div>
+{% endblock %}

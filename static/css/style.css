@@ -1,0 +1,204 @@
+/* -------------------------------
+   GENERAL RESET & BODY
+---------------------------------*/
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* -------------------------------
+   CONTAINER
+---------------------------------*/
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* -------------------------------
+   NAVBAR (shown only after login)
+---------------------------------*/
+.navbar {
+    background-color: #343a40;
+    padding: 10px 20px;
+}
+.navbar a {
+    color: #ffffff !important;
+    margin-right: 15px;
+    text-decoration: none;
+    font-weight: 500;
+}
+.navbar a:hover {
+    color: #ffc107 !important;
+}
+
+/* -------------------------------
+   BUTTONS
+---------------------------------*/
+.btn-custom {
+    background-color: #343a40;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+.btn-custom:hover {
+    background-color: #ffc107;
+    color: #343a40;
+}
+
+/* -------------------------------
+   HOME / LANDING FULLSCREEN BACKGROUND
+---------------------------------*/
+.home-bg, .landing-bg {
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.btn-get-started, .btn-landing {
+    background-color: #343a40;
+    color: #fff;
+    padding: 15px 40px;
+    font-size: 24px;
+    border-radius: 10px;
+    margin: 10px;
+    text-decoration: none;
+    transition: 0.4s;
+}
+.btn-get-started:hover, .btn-landing:hover {
+    background-color: #ffc107;
+    color: #343a40;
+    transform: scale(1.05);
+}
+
+/* -------------------------------
+   FORM ELEMENTS
+---------------------------------*/
+input.form-control, textarea.form-control {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+}
+input.form-control:focus, textarea.form-control:focus {
+    border-color: #343a40;
+    box-shadow: none;
+}
+
+/* -------------------------------
+   DASHBOARD UPLOAD BOX
+---------------------------------*/
+.upload-box {
+    border: 2px dashed #343a40;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    background-color: #ffffff;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.upload-box:hover {
+    background-color: #e9ecef;
+}
+
+/* -------------------------------
+   HISTORY TABLE
+---------------------------------*/
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.table-custom th, .table-custom td {
+    padding: 15px;
+    text-align: left;
+}
+.table-custom th {
+    background-color: #343a40;
+    color: #fff;
+}
+.table-custom tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* -------------------------------
+   CARDS
+---------------------------------*/
+.card-custom {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+/* -------------------------------
+   PDF / TRANSCRIPT AREA
+---------------------------------*/
+.transcript-box {
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* -------------------------------
+   PROFILE PAGE
+---------------------------------*/
+.profile-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* -------------------------------
+   FOOTER
+---------------------------------*/
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #343a40;
+    color: #ffffff;
+    margin-top: 40px;
+    font-size: 14px;
+}
+
+/* -------------------------------
+   RESPONSIVE
+---------------------------------*/
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .upload-box {
+        padding: 30px;
+    }
+
+    .navbar a {
+        margin-right: 10px;
+        font-size: 14px;
+    }
+
+    .btn-get-started, .btn-landing {
+        padding: 12px 30px;
+        font-size: 20px;
+    }
+}
